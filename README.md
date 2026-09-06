@@ -13,14 +13,14 @@ Los instaladores se publican como *Releases* de este repo. La página
 ## Publicar una versión nueva
 
 ```bash
-gh release create v1.0.1 \
+gh release create v4.0.1 \
   "C:/gedetca-apk/GedetcaWebEscritorio_Setup.exe" \
   "C:/gedetca-apk/app-debug.apk#Gedetca_soft.apk" \
-  --title "v1.0.1" --notes "Cambios..."
+  --title "v4.0.1" --notes "Cambios..."
 ```
 
 O reemplazar los assets de la release actual:
 
 ```bash
-gh release upload v1.0 "C:/gedetca-apk/app-debug.apk#Gedetca_soft.apk" --clobber
+gh release upload v4.0 "C:/gedetca-apk/app-debug.apk#Gedetca_soft.apk" --clobber
 ```
