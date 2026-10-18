@@ -181,8 +181,10 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
   .then(rel => {
     if (!rel || !rel.assets) return;
     const fmt = b => (b/1048576).toFixed(0) + ' MB';
-    const fecha = rel.published_at ? new Date(rel.published_at).toLocaleDateString('es-EC') : '';
+    // La fecha de cada archivo es la de su ultima subida (la release se publico antes y se reemplazan los archivos)
+    const fechaDe = a => new Date(a.updated_at || rel.published_at).toLocaleDateString('es-EC');
     for (const a of rel.assets) {
+      const fecha = fechaDe(a);
       if (a.name.endsWith('.exe')) {
         document.getElementById('btnExe').href = a.browser_download_url;
         document.getElementById('metaExe').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
