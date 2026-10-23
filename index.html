@@ -109,6 +109,21 @@
   }
   .nota svg{flex:none;width:22px;height:22px;margin-top:1px;stroke:var(--acento-brillo);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
   .nota b{color:var(--texto)}
+  /* ventana de contraseña */
+  .gate{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(3,22,32,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  .gate.abierta{display:flex}
+  .gate-caja{width:100%;max-width:400px;padding:28px 26px 24px;border-radius:22px;background:linear-gradient(150deg,#0a3a50,#062f43);border:1px solid rgba(255,255,255,.16);box-shadow:0 24px 60px rgba(0,0,0,.5);animation:entra .25s ease-out both}
+  .gate-caja h3{margin:0 0 6px;font-size:19px;font-weight:700;display:flex;align-items:center;gap:10px}
+  .gate-caja h3 svg{width:22px;height:22px;stroke:var(--acento-brillo);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .gate-caja p{margin:0 0 16px;font-size:13.5px;color:var(--suave);line-height:1.55}
+  .gate-caja input{width:100%;height:48px;padding:0 14px;border-radius:13px;font:inherit;font-size:15px;color:var(--texto);background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.18);outline:none}
+  .gate-caja input:focus{border-color:var(--acento);box-shadow:0 0 0 3px rgba(0,196,222,.25)}
+  .gate-err{min-height:20px;margin:8px 2px 0;font-size:13px;color:#ff9a9a}
+  .gate-acc{display:flex;gap:10px;margin-top:12px}
+  .gate-acc button{flex:1;height:46px;border-radius:13px;border:0;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;color:#fff}
+  .gate-ok{background:var(--grad);box-shadow:0 8px 20px rgba(0,196,222,.35)}
+  .gate-ok:disabled{opacity:.6;cursor:wait}
+  .gate-no{background:rgba(255,255,255,.1)}
   footer{margin-top:30px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:#6fa3aa}
   footer img{width:30px;height:auto;opacity:.9}
   @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -169,10 +184,23 @@
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
     <span><b>Uso interno de Gedetca.</b> Ambas versiones se conectan a la base de datos de planta
     en la red local. La versión de escritorio y la de Android comparten los mismos datos en
-    tiempo real.</span>
+    tiempo real. <b>Las descargas requieren contraseña:</b> solicítala a Gedetca.</span>
   </p>
 
   <footer><img src="favicon.svg" alt="">github.com/kalimusic0/gedetca-descargas</footer>
+
+  <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitulo">
+    <form class="gate-caja" id="gateForm" autocomplete="off">
+      <h3 id="gateTitulo"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Descarga protegida</h3>
+      <p id="gateTexto">Escribe la contraseña para descargar.</p>
+      <input type="password" id="gatePass" placeholder="Contraseña" aria-label="Contraseña" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="gate-err" id="gateErr" role="alert"></div>
+      <div class="gate-acc">
+        <button type="button" class="gate-no" id="gateNo">Cancelar</button>
+        <button type="submit" class="gate-ok" id="gateOk">Descargar</button>
+      </div>
+    </form>
+  </div>
 
 <script>
 // Muestra fecha y tamaño reales de cada archivo desde la API de releases.
@@ -199,6 +227,55 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
     }
   })
   .catch(() => {});
+</script>
+
+<script>
+// Contraseña para descargar. Solo se guarda el hash (PBKDF2-SHA256), no la clave.
+(function () {
+  var GATE = {
+    btnExe: { nombre: 'el instalador de Windows',
+      salt: '6eadffaf64f4709d577416f0bd3a1367', hash: 'aa47391f886c9638bc80e4cde29595e74c92ca94d3620e8704b414b3482c6463' },
+    btnApk: { nombre: 'el APK de Android',
+      salt: '4410a54263c0bc8c8351e93565a628ec', hash: 'a79d8eddc5dafdea33741ca09f65f5f55ed16f4e41588e1feeb89072331f40fa' }
+  };
+  var gate = document.getElementById('gate'), form = document.getElementById('gateForm'),
+      pass = document.getElementById('gatePass'), err = document.getElementById('gateErr'),
+      ok = document.getElementById('gateOk'), texto = document.getElementById('gateTexto');
+  var actual = null;
+
+  function aHex(buf) { return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join(''); }
+  function deHex(s) { return new Uint8Array(s.match(/../g).map(function (h) { return parseInt(h, 16); })); }
+  async function derivar(clave, saltHex) {
+    var k = await crypto.subtle.importKey('raw', new TextEncoder().encode(clave), 'PBKDF2', false, ['deriveBits']);
+    return aHex(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: deHex(saltHex), iterations: 200000 }, k, 256));
+  }
+  function abrir(id) {
+    actual = id; err.textContent = ''; pass.value = ''; ok.disabled = false;
+    texto.textContent = 'Escribe la contraseña para descargar ' + GATE[id].nombre + '.';
+    gate.classList.add('abierta'); setTimeout(function () { pass.focus(); }, 30);
+  }
+  function cerrar() { gate.classList.remove('abierta'); actual = null; pass.value = ''; }
+
+  Object.keys(GATE).forEach(function (id) {
+    document.getElementById(id).addEventListener('click', function (e) { e.preventDefault(); abrir(id); });
+  });
+  document.getElementById('gateNo').addEventListener('click', cerrar);
+  gate.addEventListener('click', function (e) { if (e.target === gate) cerrar(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!actual) return;
+    if (!(window.crypto && crypto.subtle)) { err.textContent = 'Abre esta página con https:// para poder verificar la contraseña.'; return; }
+    ok.disabled = true; err.textContent = '';
+    try {
+      var g = GATE[actual], btn = document.getElementById(actual);
+      if ((await derivar(pass.value, g.salt)) === g.hash) { var destino = btn.href; cerrar(); window.location.href = destino; }
+      else { err.textContent = 'Contraseña incorrecta.'; pass.select(); }
+    } catch (x) { err.textContent = 'No se pudo verificar. Intenta de nuevo.'; }
+    ok.disabled = false;
+  });
+})();
 </script>
 </body>
 </html>
