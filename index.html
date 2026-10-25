@@ -198,6 +198,25 @@
       </a>
       <div class="meta" id="metaApk">archivo .apk</div>
     </section>
+
+    <section class="card">
+      <div class="card-cab">
+        <span class="ico-caja"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></span>
+        <h2>Servidor de impresión</h2>
+      </div>
+      <p class="plat">Windows 10 / 11 · instalador · para la app Android</p>
+      <ul class="pasos">
+        <li>Instálalo en la <b>PC servidor</b> (la que tiene MySQL y las impresoras). No necesita Python.</li>
+        <li>Acepta el permiso de administrador para abrir el <b>puerto 15000</b> en el firewall: sin eso los celulares no imprimen.</li>
+        <li>Arranca solo con Windows y queda en segundo plano. En la app Android, pon la IP de esa PC en <b>Ajustes de conexión</b>.</li>
+      </ul>
+      <a class="btn" id="btnServidor"
+         href="https://github.com/kalimusic0/gedetca-descargas/releases/latest/download/GedetcaServidorImpresion_Setup.exe">
+        <svg viewBox="0 0 24 24"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 20h14"/></svg>
+        Descargar para Windows
+      </a>
+      <div class="meta" id="metaServidor">instalador .exe</div>
+    </section>
   </main>
 
   <p class="nota">
@@ -239,6 +258,10 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
         document.getElementById('btnGlabels').href = a.browser_download_url;
         document.getElementById('metaGlabels').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
       }
+      if (a.name === 'GedetcaServidorImpresion_Setup.exe') {
+        document.getElementById('btnServidor').href = a.browser_download_url;
+        document.getElementById('metaServidor').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
+      }
       if (a.name.endsWith('.apk')) {
         document.getElementById('btnApk').href = a.browser_download_url;
         document.getElementById('metaApk').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
@@ -260,7 +283,9 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
     btnGlabels: { nombre: 'el instalador de Windows con Gedetca Labels',
       salt: 'bdd7ba99db5c6532ad581348ad8e78c9', hash: 'bce25455b14a48d57808a9f671bd6d54d3aa825eb6c0d82c11a96825816560d6' },
     btnApk: { nombre: 'el APK de Android',
-      salt: '4410a54263c0bc8c8351e93565a628ec', hash: 'a79d8eddc5dafdea33741ca09f65f5f55ed16f4e41588e1feeb89072331f40fa' }
+      salt: '4410a54263c0bc8c8351e93565a628ec', hash: 'a79d8eddc5dafdea33741ca09f65f5f55ed16f4e41588e1feeb89072331f40fa' },
+    btnServidor: { nombre: 'el instalador del servidor de impresión',
+      salt: '58c2a9d59146b036fc317e785b62d440', hash: '1b8af0408939a484aee20296b805c22fb687c1cb182f124a1000c23be737d530' }
   };
   var gate = document.getElementById('gate'), form = document.getElementById('gateForm'),
       pass = document.getElementById('gatePass'), err = document.getElementById('gateErr'),
