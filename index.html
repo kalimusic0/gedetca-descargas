@@ -170,7 +170,7 @@
       <ul class="pasos">
         <li>Descarga y ejecuta el instalador.</li>
         <li>Si Windows muestra "SmartScreen", toca <b>Más información → Ejecutar de todas formas</b>.</li>
-        <li>Requiere <b>Gedetca Labels</b> instalado en la PC (gratis en <b>www.gedetca.com/labels</b>). No usa BarTender.</li>
+        <li>Requiere <b>Gedetca Labels</b> instalado en la PC (descárgalo en esta misma página). No usa BarTender.</li>
       </ul>
       <a class="btn" id="btnGlabels"
          href="https://github.com/kalimusic0/gedetca-descargas/releases/latest/download/GedetcaWebGlabels_Setup.exe">
@@ -178,6 +178,25 @@
         Descargar para Windows
       </a>
       <div class="meta" id="metaGlabels">instalador .exe</div>
+    </section>
+
+    <section class="card">
+      <div class="card-cab">
+        <span class="ico-caja"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8v8M11 8v8M14 8v5M17 8v8"/></svg></span>
+        <h2>Gedetca Labels</h2>
+      </div>
+      <p class="plat">Windows 10 / 11 · instalador · diseñador de etiquetas</p>
+      <ul class="pasos">
+        <li>Descarga y ejecuta el instalador. Instálalo en cada PC que imprime etiquetas.</li>
+        <li>Si Windows muestra "SmartScreen", toca <b>Más información → Ejecutar de todas formas</b>.</li>
+        <li>Es el motor de etiquetas que usa la versión de escritorio con Gedetca Labels.</li>
+      </ul>
+      <a class="btn" id="btnLabels"
+         href="https://github.com/kalimusic0/gedetca-descargas/releases/latest/download/GedetcaLabels_Setup.exe">
+        <svg viewBox="0 0 24 24"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 20h14"/></svg>
+        Descargar para Windows
+      </a>
+      <div class="meta" id="metaLabels">instalador .exe</div>
     </section>
 
     <section class="card">
@@ -258,6 +277,10 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
         document.getElementById('btnGlabels').href = a.browser_download_url;
         document.getElementById('metaGlabels').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
       }
+      if (a.name === 'GedetcaLabels_Setup.exe') {
+        document.getElementById('btnLabels').href = a.browser_download_url;
+        document.getElementById('metaLabels').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
+      }
       if (a.name === 'GedetcaServidorImpresion_Setup.exe') {
         document.getElementById('btnServidor').href = a.browser_download_url;
         document.getElementById('metaServidor').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
@@ -282,6 +305,8 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
       salt: '6eadffaf64f4709d577416f0bd3a1367', hash: 'aa47391f886c9638bc80e4cde29595e74c92ca94d3620e8704b414b3482c6463' },
     btnGlabels: { nombre: 'el instalador de Windows con Gedetca Labels',
       salt: 'bdd7ba99db5c6532ad581348ad8e78c9', hash: 'bce25455b14a48d57808a9f671bd6d54d3aa825eb6c0d82c11a96825816560d6' },
+    btnLabels: { nombre: 'el instalador de Gedetca Labels',
+      salt: '2f5cedc621c47338a8a304d3934a1a8c', hash: '4482e3fc60963896b7c56162d71bed39559f0c4ebc833dec9e51defb9867eb7d' },
     btnApk: { nombre: 'el APK de Android',
       salt: '4410a54263c0bc8c8351e93565a628ec', hash: 'a79d8eddc5dafdea33741ca09f65f5f55ed16f4e41588e1feeb89072331f40fa' },
     btnServidor: { nombre: 'el instalador del servidor de impresión',
