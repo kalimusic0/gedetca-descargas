@@ -184,6 +184,25 @@
 
     <section class="card">
       <div class="card-cab">
+        <span class="ico-caja"><svg viewBox="0 0 24 24"><path d="M7 2.5 8.2 4.6a7.4 7.4 0 0 1 7.6 0L17 2.5l.9.5-1.2 2.1A7.5 7.5 0 0 1 19.5 11H4.5a7.5 7.5 0 0 1 2.8-5.9L6.1 3l.9-.5ZM9 8.2a.9.9 0 1 0 0-1.8.9.9 0 0 0 0 1.8Zm6 0a.9.9 0 1 0 0-1.8.9.9 0 0 0 0 1.8ZM4.5 12h15v6.5A1.5 1.5 0 0 1 18 20h-.5v2.5a1.5 1.5 0 0 1-3 0V20h-5v2.5a1.5 1.5 0 0 1-3 0V20H6a1.5 1.5 0 0 1-1.5-1.5Z"/></svg></span>
+        <h2>APK Android · solo para Zhonglian</h2>
+      </div>
+      <p class="plat">Teléfonos y handheld · APK · servidor <code>192.168.0.194</code></p>
+      <ul class="pasos">
+        <li><b>Solo para Zhonglian.</b> Ya viene configurado con el servidor <code>192.168.0.194</code>; no hace falta escribir la IP.</li>
+        <li>Descarga el APK y ábrelo para instalar. Si pide permiso, activa <b>"Instalar apps desconocidas"</b>.</li>
+        <li><b>Handheld Honeywell:</b> copia el APK a <code>/sdcard/honeywell/autoinstall/</code> con <b>Provisioning mode</b> activado.</li>
+      </ul>
+      <a class="btn" id="btnApkZhonglian"
+         href="https://github.com/kalimusic0/gedetca-descargas/releases/latest/download/Gedetca_soft_Zhonglian.apk">
+        <svg viewBox="0 0 24 24"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 20h14"/></svg>
+        Descargar para Android
+      </a>
+      <div class="meta" id="metaApkZhonglian">archivo .apk</div>
+    </section>
+
+    <section class="card">
+      <div class="card-cab">
         <span class="ico-caja"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></span>
         <h2>Servidor de impresión</h2>
       </div>
@@ -263,9 +282,13 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
         document.getElementById('btnServidorWeb').href = a.browser_download_url;
         document.getElementById('metaServidorWeb').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
       }
-      if (a.name.endsWith('.apk')) {
+      if (a.name === 'Gedetca_soft.apk') {
         document.getElementById('btnApk').href = a.browser_download_url;
         document.getElementById('metaApk').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
+      if (a.name === 'Gedetca_soft_Zhonglian.apk') {
+        document.getElementById('btnApkZhonglian').href = a.browser_download_url;
+        document.getElementById('metaApkZhonglian').textContent = `${a.name} · ${fmt(a.size)} · ${fecha}`;
+      }
       }
     }
     if (rel.tag_name) {
@@ -282,6 +305,8 @@ fetch('https://api.github.com/repos/kalimusic0/gedetca-descargas/releases/latest
     btnLabels: { nombre: 'el instalador de Gedetca Labels',
       salt: '2f5cedc621c47338a8a304d3934a1a8c', hash: '4482e3fc60963896b7c56162d71bed39559f0c4ebc833dec9e51defb9867eb7d' },
     btnApk: { nombre: 'el APK de Android',
+      salt: '4410a54263c0bc8c8351e93565a628ec', hash: 'a79d8eddc5dafdea33741ca09f65f5f55ed16f4e41588e1feeb89072331f40fa' },
+    btnApkZhonglian: { nombre: 'el APK de Android solo para Zhonglian',
       salt: '4410a54263c0bc8c8351e93565a628ec', hash: 'a79d8eddc5dafdea33741ca09f65f5f55ed16f4e41588e1feeb89072331f40fa' },
     btnServidorWeb: { nombre: 'el instalador del servidor web',
       salt: '00100fbec9fa0802f00d6de04ba51e24', hash: '76342f61c5f0b189ec6c99ab009b2991bfcb1691bb99d908573f299ac9b4e571' },
